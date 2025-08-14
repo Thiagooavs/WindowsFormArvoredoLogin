@@ -47,12 +47,8 @@ namespace WindowsFormsAppArvoredo.Models
                 Banco.AbrirConexao();
                 Banco.Comando = new MySqlCommand("use arvoredo; SELECT ID, Nome, NivelAcesso FROM usuarios WHERE Login = @Login AND Senha = @Senha AND Ativo = 1 ", Banco.Conexao);
 
-                Banco.Comando.Parameters.AddWithValue("@Login", Login);
-                Banco.Comando.Parameters.AddWithValue("@Senha", Senha);
-
-                Banco.Comando.ExecuteNonQuery();
-
-
+                Banco.Comando.Parameters.AddWithValue("@Login", login);
+                Banco.Comando.Parameters.AddWithValue("@Senha", senha);
 
                 using (MySqlDataReader leitor = Banco.Comando.ExecuteReader())
                 {
@@ -76,6 +72,10 @@ namespace WindowsFormsAppArvoredo.Models
             {
                 throw new Exception("Erro ao verificar credenciais: " + ex.Message);
 
+            }
+            finally
+            {
+                Banco.FecharConexao();
             }
         }
 

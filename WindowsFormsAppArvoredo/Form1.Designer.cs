@@ -44,11 +44,11 @@ namespace WindowsFormsAppArvoredo
             this.label1.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.label1.AutoSize = true;
             this.label1.BackColor = System.Drawing.Color.Transparent;
-            this.label1.Font = new System.Drawing.Font("Gagalin", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
             this.label1.Location = new System.Drawing.Point(456, 175);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(246, 58);
+            this.label1.Size = new System.Drawing.Size(312, 55);
             this.label1.TabIndex = 0;
             this.label1.Text = "ARVOREDO ";
             this.label1.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -60,7 +60,7 @@ namespace WindowsFormsAppArvoredo
             this.Btn_Login.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(239)))), ((int)(((byte)(212)))), ((int)(((byte)(172)))));
             this.Btn_Login.FlatAppearance.BorderSize = 0;
             this.Btn_Login.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.Btn_Login.Font = new System.Drawing.Font("Gagalin", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Btn_Login.Font = new System.Drawing.Font("Microsoft Sans Serif", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Btn_Login.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
             this.Btn_Login.Location = new System.Drawing.Point(367, 268);
             this.Btn_Login.Name = "Btn_Login";
@@ -78,7 +78,7 @@ namespace WindowsFormsAppArvoredo
             this.Btn_Config.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(239)))), ((int)(((byte)(212)))), ((int)(((byte)(172)))));
             this.Btn_Config.FlatAppearance.BorderSize = 0;
             this.Btn_Config.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.Btn_Config.Font = new System.Drawing.Font("Gagalin", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Btn_Config.Font = new System.Drawing.Font("Microsoft Sans Serif", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Btn_Config.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
             this.Btn_Config.Location = new System.Drawing.Point(367, 375);
             this.Btn_Config.Name = "Btn_Config";

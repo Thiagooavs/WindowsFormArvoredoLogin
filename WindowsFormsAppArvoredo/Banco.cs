@@ -28,11 +28,11 @@ namespace WindowsFormsAppArvoredo
         {
             try
             {
-                Conexao = new MySqlConnection("Server=localhost;port=3306;uid=root;pwd=");
+                Conexao = new MySqlConnection("Server=localhost;port=3307;uid=root;pwd=etecjau");
 
                 Conexao.Open();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
 
                 MessageBox.Show(e.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -51,30 +51,31 @@ namespace WindowsFormsAppArvoredo
             {
                 MessageBox.Show(e.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-        } 
+        }
 
         public static void CriarBanco()
         {
             try
             {
-
                 AbrirConexao();
 
-                Comando = new MySqlCommand("USE arvoredo", Conexao);
-
+                // CORREÇÃO: Especifique o database na string de conexão
+                Comando = new MySqlCommand("CREATE DATABASE IF NOT EXISTS arvoredo", Conexao);
                 Comando.ExecuteNonQuery();
 
-                
+                // Agora use o database
+                Comando = new MySqlCommand("USE arvoredo", Conexao);
+                Comando.ExecuteNonQuery();
 
                 FecharConexao();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 MessageBox.Show(e.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 FecharConexao();
-
             }
         }
-        
     }
+
 }
+

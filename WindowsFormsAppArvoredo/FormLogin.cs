@@ -109,7 +109,7 @@ namespace WindowsFormsAppArvoredo
         public static class Conexao
         {
             // String de conexão com o banco de dados MySQL
-            public static string CaminhoConexao = "Server=localhost;Database=arvoredo;Uid=root;Pwd=;";
+            public static string CaminhoConexao = "Server=localhost;port=3307;Database=arvoredo;uid=root;pwd=etecjau";
 
             // Método para obter uma conexão com o banco de dados
             public static MySqlConnection ObterConexao()
