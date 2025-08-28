@@ -11,6 +11,8 @@ namespace WindowsFormsAppArvoredo
     {
         Usuario u;
 
+        #region Design du Gu
+
         [DllImport("Gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
 
         private static extern IntPtr CreateRoundRectRgn
@@ -79,6 +81,8 @@ namespace WindowsFormsAppArvoredo
             pictureBox2.Left = (this.ClientSize.Width - pictureBox2.Width) / 2;
         }
 
+        #endregion
+
         private void Form1_Resize(object sender, EventArgs e)
         {
             CentralizarControles();
@@ -87,12 +91,44 @@ namespace WindowsFormsAppArvoredo
         {
             Btn_Login.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, Btn_Login.Width, Btn_Login.Height, 100, 100));
             Btn_Config.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, Btn_Config.Width, Btn_Config.Height, 100, 100));
-            Banco.CriarBanco();
 
+            //TestarEConfigurarBanco();
+            
+        }
+
+        private void TestarEConfigurarBanco()
+        {
+            try
+            {
+                // Testar conexão
+                if (Banco.TestarConexao())
+                {
+                    // Criar tabela de usuários se necessário
+                    Banco.CriarTabelaUsuarios();
+                }
+                else
+                {
+                    MessageBox.Show("Não foi possível conectar ao banco de dados.\nVerifique sua conexão com a internet.",
+                                  "Erro de Conexão", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($"Erro ao configurar banco de dados: {e.Message}",
+                              "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void Btn_Login_Click(object sender, EventArgs e)
         {
+            // Verificar conexão antes de abrir o login
+            if (!Banco.TestarConexao())
+            {
+                MessageBox.Show("Não é possível conectar ao banco de dados.\nVerifique sua conexão com a internet e tente novamente.",
+                              "Erro de Conexão", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             FormLogin login = new FormLogin();
             login.ShowDialog();
         }
@@ -109,11 +145,26 @@ namespace WindowsFormsAppArvoredo
 
         private void Btn_Config_Click(object sender, EventArgs e)
         {
-            u = new Usuario()
+            // Criar formulário de configurações ou usuário de teste
+            DialogResult result = MessageBox.Show(
+                "Deseja criar um usuário de teste?\n\nLogin: teste\nSenha: 123456\nNome: Usuário Teste",
+                "Criar Usuário Teste",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
             {
-                
-            };
-            u.Incluir();
+                u = new Usuario()
+                {
+                    Login = "teste",
+                    Senha = "123456",
+                    Nome = "Usuário Teste",
+                    Email = "teste@arvoredo.com",
+                    NivelAcesso = 1,
+                    Ativo = 1
+                };
+                u.Incluir();
+            }
         }
     }
 }

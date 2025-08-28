@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Runtime.InteropServices;
@@ -10,7 +11,8 @@ namespace WindowsFormsAppArvoredo
 {
     public partial class FormLogin : Form
     {
-        #region design do gay Gustavo
+        #region Desing e Layout
+
         [DllImport("Gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
         private static extern IntPtr CreateRoundRectRgn
         (
@@ -86,6 +88,14 @@ namespace WindowsFormsAppArvoredo
 
             Txt_Senha.PasswordChar = '•';
 
+            // Configurar placeholder nos campos de texto
+            if (string.IsNullOrEmpty(Txt_Usuario.Text))
+            {
+                Txt_Usuario.Text = "Digite seu usuário";
+                Txt_Usuario.ForeColor = Color.Gray;
+            }
+
+
             Txt_Senha.KeyPress += (s, args) =>
             {
                 if (args.KeyChar == (char)Keys.Enter) 
@@ -94,8 +104,20 @@ namespace WindowsFormsAppArvoredo
                     args.Handled = true;
                 }
             };
+
+            Txt_Usuario.KeyPress += (s, args) =>
+            {
+                if (args.KeyChar == (char)Keys.Enter)
+                {
+                    Txt_Senha.Focus();
+                    args.Handled = true;
+                }
+            };
+
         }
         #endregion
+
+        #region Eventos dos Botões
 
         //botão de voltar
         private void btnVoltar_Click(object sender, EventArgs e)
@@ -103,45 +125,16 @@ namespace WindowsFormsAppArvoredo
             this.Close();
         }
 
-        //nomeação da classe
-        Usuario u;
-
-        public static class Conexao
-        {
-            // String de conexão com o banco de dados MySQL
-            public static string CaminhoConexao = "Server=localhost;port=3307;Database=arvoredo;uid=root;pwd=etecjau";
-
-            // Método para obter uma conexão com o banco de dados
-            public static MySqlConnection ObterConexao()
-            {
-                MySqlConnection conexao = new MySqlConnection(CaminhoConexao);
-                conexao.Open();
-                return conexao;
-            }
-        }
-
-        public static class UsuarioLogado
-        {
-            public static int ID { get; set; }
-            public static string Login { get; set; }
-            public static string Nome { get; set; }
-            public static int NivelAcesso { get; set; }
-
-            public static bool TemPermissaoAdmin()
-            {
-                return NivelAcesso >= 3;
-            }
-
-            public static bool TemPermissaoGerencial()
-            {
-                return NivelAcesso >= 2;
-            }
-        }
-
         private void btnEntrar_Click(object sender, EventArgs e)
         {
             string usuario = Txt_Usuario.Text.Trim();
             string senha = Txt_Senha.Text.Trim();
+
+            // Limpar placeholder se existir
+            if (usuario == "Digite seu usuário")
+            {
+                usuario = "";
+            }
 
             // Verifica se os campos estão preenchidos
             if (string.IsNullOrEmpty(usuario) || string.IsNullOrEmpty(senha))
@@ -151,22 +144,29 @@ namespace WindowsFormsAppArvoredo
                 return;
             }
 
+            // Mostrar cursor de espera
+            this.Cursor = Cursors.WaitCursor;
+            btnEntrar.Enabled = false;
+            btnEntrar.Text = "Verificando...";
+
             try
             {
-                u = new Usuario()
+                // Verificar conexão com o banco
+                if (!Banco.TestarConexao())
                 {
+                    MessageBox.Show("Não foi possível conectar ao banco de dados.\nVerifique sua conexão com a internet.",
+                                  "Erro de Conexão", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
 
-                };
+                Usuario u = new Usuario();
+               
                 // Verifica as credenciais
                 if (u.Verificar(usuario, senha))
                 {
                    
 
-                    // Exibe mensagem de boas-vindas
-                    /*MessageBox.Show($"Bem-vindo ao Sistema Arvoredo, {nomeUsuario}!",
-                        "Login realizado com sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);*/
-
-                    // Oculta o formulário de login (não fecha completamente)
+                    //Oculta o formulário login
                     this.Hide();
 
                     // Cria e exibe a tela principal do sistema
@@ -190,6 +190,13 @@ namespace WindowsFormsAppArvoredo
                 MessageBox.Show("Erro ao realizar login: " + ex.Message,
                     "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+            finally
+            {
+                // Restaurar interface
+                this.Cursor = Cursors.Default;
+                btnEntrar.Enabled = true;
+                btnEntrar.Text = "Login";
+            }
         }
 
         private void btnCancelar_Click(object sender, EventArgs e)
@@ -197,52 +204,6 @@ namespace WindowsFormsAppArvoredo
             // Fecha o aplicativo
             this.DialogResult = DialogResult.Cancel;
             this.Close();
-        }
-
-
-
-        // Método que verifica as credenciais no banco de dados
-        private bool VerificarCredenciais(string login, string senha, out int idUsuario, out string nomeUsuario, out int nivelAcesso)
-        {
-            // Inicializa os valores de saída
-            idUsuario = 0;
-            nomeUsuario = "";
-            nivelAcesso = 0;
-
-            try
-            {
-                using (MySqlConnection conexao = Conexao.ObterConexao())
-                {
-                    // Query para verificar se existe o usuário com a senha informada
-                    // e obter o ID, nome e nível de acesso do usuário
-                    string query = @"SELECT ID, Nome, NivelAcesso FROM Usuarios 
-                                   WHERE Login = @Login AND Senha = @Senha AND Ativo = 1";
-
-                    using (MySqlCommand comando = new MySqlCommand(query, conexao))
-                    {
-                        // Adiciona os parâmetros (evita SQL Injection)
-                        comando.Parameters.AddWithValue("@Login", login);
-                        comando.Parameters.AddWithValue("@Senha", senha);
-
-                        using (MySqlDataReader leitor = comando.ExecuteReader())
-                        {
-                            if (leitor.Read())
-                            {
-                                // Lê os dados do usuário
-                                idUsuario = Convert.ToInt32(leitor["ID"]);
-                                nomeUsuario = leitor["Nome"].ToString();
-                                nivelAcesso = Convert.ToInt32(leitor["NivelAcesso"]);
-                                return true;
-                            }
-                            return false;
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Erro ao verificar credenciais: " + ex.Message);
-            }
         }
 
         private void pictureBoxMostrarSenha_Click(object sender, EventArgs e)
@@ -262,5 +223,7 @@ namespace WindowsFormsAppArvoredo
                 ((PictureBox)sender).Image = Properties.Resources.senha_do_olho;
             }
         }
+
+        #endregion
     }
 }
